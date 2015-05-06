@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -76,7 +77,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
+//import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 //handles events related to entities
@@ -94,8 +95,10 @@ class EntityEventHandler implements Listener
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onEntityShootBowEvent (EntityShootBowEvent event)
 	{
+		GriefPreventionPlus.addLogEntry("EntityShootBowEvent: F0");
 		if (event.getEntityType()==EntityType.PLAYER) {
 			Player player = (Player) event.getEntity();
+			//GriefPreventionPlus.addLogEntry("EntityShootBowEvent: F1 - "+player.getItemInHand().getTypeId()+":"+player.getItemInHand().getData().getData()+" "+Material.getMaterial(player.getItemInHand().getTypeId()).toString());
 			
 			// GPP target claim protection
 			if (!GriefPreventionPlus.instance.restrictor.checkRanged(player, null)) {
@@ -701,8 +704,8 @@ class EntityEventHandler implements Listener
 		                //limit attacks by players to owners and admins in ignore claims mode
 		                if(attacker != null)
 		                {
-    		                UUID ownerID = tameable.getOwner().getUniqueId();
-    		               
+                            // UUID ownerID = tameable.getOwner().getUniqueId();
+                            UUID ownerID = UUIDProvider.retrieveUUID(tameable.getOwner().getName());
     		                //if the player interacting is the owner, always allow
     		                if(attacker.getUniqueId().equals(ownerID)) return;
     		                
@@ -713,7 +716,7 @@ class EntityEventHandler implements Listener
     		                //otherwise disallow in non-pvp worlds
     		                if(!GriefPreventionPlus.instance.config_pvp_enabledWorlds.contains(subEvent.getEntity().getLocation().getWorld()))
                             {
-        		                OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID); 
+        		                OfflinePlayer owner = UUIDProvider.get(ownerID); // GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID);
                                 String ownerName = owner.getName();
         		                if(ownerName == null) ownerName = "someone";
         		                String message = GriefPreventionPlus.instance.dataStore.getMessage(Messages.NoDamageClaimedEntity, ownerName);
@@ -945,10 +948,15 @@ class EntityEventHandler implements Listener
 	    ThrownPotion potion = event.getPotion();
 	    
 	    //ignore potions not thrown by players
-	    ProjectileSource projectileSource = potion.getShooter();
-        if(projectileSource == null || !(projectileSource instanceof Player)) return;
-        Player thrower = (Player)projectileSource;
-        
+
+        // dedo1911
+	    //ProjectileSource projectileSource = potion.getShooter();
+        //if(projectileSource == null || !(projectileSource instanceof Player)) return;
+        //Player thrower = (Player)projectileSource;
+		if(event.getEntity().getShooter() == null || !(event.getEntity().getShooter() instanceof Player)) return;
+		Player thrower = (Player)event.getEntity().getShooter();
+		// end dedo1911 ProjectileSource fix
+
 	    Collection<PotionEffect> effects = potion.getEffects();
 	    for(PotionEffect effect : effects)
 	    {

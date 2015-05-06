@@ -28,10 +28,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import net.kaikk.mc.uuidprovider.*;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -708,15 +706,19 @@ public class Claim {
 				}
 			} else {
 				if((entry.getValue() & ClaimPermission.MANAGE.perm)!=0) {
-					managers.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+					// managers.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+                    managers.add(UUIDProvider.get(entry.getKey()).getName());
 				}
 				
 				if((entry.getValue() & ClaimPermission.BUILD.perm)!=0) {
-					builders.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+					// builders.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+                    builders.add(UUIDProvider.get(entry.getKey()).getName());
 				} else if((entry.getValue() & ClaimPermission.CONTAINER.perm)!=0) {
-					containers.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+					// containers.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+                    containers.add(UUIDProvider.get(entry.getKey()).getName());
 				} else if((entry.getValue() & ClaimPermission.ACCESS.perm)!=0) {
-					accessors.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+					// accessors.add(GriefPreventionPlus.instance.getServer().getOfflinePlayer(entry.getKey()).getName());
+                    accessors.add(UUIDProvider.get(entry.getKey()).getName());
 				}
 			}
 		}

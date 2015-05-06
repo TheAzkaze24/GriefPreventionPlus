@@ -30,6 +30,7 @@ import net.kaikk.mc.gpp.ShovelMode;
 import net.kaikk.mc.gpp.SiegeData;
 import net.kaikk.mc.gpp.Visualization;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
@@ -206,11 +207,13 @@ public class PlayerData
     }
     
     public Date getLastLogin() {
-    	return new Date(GriefPreventionPlus.instance.getServer().getOfflinePlayer(this.playerID).getLastPlayed());
+    	//return new Date(GriefPreventionPlus.instance.getServer().getOfflinePlayer(this.playerID).getLastPlayed()); // dedo1911
+        return new Date(getTimeLastLogin());
     }
     
     public long getTimeLastLogin() {
-    	return GriefPreventionPlus.instance.getServer().getOfflinePlayer(this.playerID).getLastPlayed();
+    	//return GriefPreventionPlus.instance.getServer().getOfflinePlayer(this.playerID).getLastPlayed(); // dedo1911
+        return UUIDProvider.get(this.playerID).getLastPlayed();
     }
     
     private void loadDataFromSecondaryStorage()

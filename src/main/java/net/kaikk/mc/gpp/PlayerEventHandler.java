@@ -28,6 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -547,13 +548,14 @@ class PlayerEventHandler implements Listener
 		PlayerData playerData = this.dataStore.getPlayerData(playerID);
 		playerData.lastSpawn = now;
 		this.lastLoginThisServerSessionMap.put(playerID, nowDate);
-		
+
+		// TODO: Search if player has MINE_WOOD achievement. # dedo1911
 		//if newish, prevent chat until he's moved a bit to prove he's not a bot
-		if(!player.hasAchievement(Achievement.MINE_WOOD))
+		/*if(!player.hasAchievement(Achievement.MINE_WOOD))
 		{
 		    playerData.noChatLocation = player.getLocation();
-		}
-		
+		}*/
+
 		//if player has never played on the server before...
 		if(!player.hasPlayedBefore())
 		{
@@ -938,7 +940,7 @@ class PlayerEventHandler implements Listener
             Tameable tameable = (Tameable)entity;
             if(tameable.isTamed() && tameable.getOwner() != null)
             {
-               UUID ownerID = tameable.getOwner().getUniqueId();
+               UUID ownerID = UUIDProvider.retrieveUUID(tameable.getOwner().getName()); // dedo1911
                
                //if the player interacting is the owner or an admin in ignore claims mode, always allow
                if(player.getUniqueId().equals(ownerID) || playerData.ignoreClaims)
@@ -958,8 +960,9 @@ class PlayerEventHandler implements Listener
                if(!GriefPreventionPlus.instance.config_pvp_enabledWorlds.contains(entity.getLocation().getWorld()))
                {
                   //otherwise disallow
-                  OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID); 
-                  String ownerName = owner.getName();
+                  //OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID); // dedo1911
+				   OfflinePlayer owner = UUIDProvider.get(ownerID);
+				   String ownerName = owner.getName();
                   if(ownerName == null) ownerName = "someone";
                   String message = GriefPreventionPlus.instance.dataStore.getMessage(Messages.NotYourPet, ownerName);
                   if(player.hasPermission("griefprevention.ignoreclaims"))
@@ -1089,7 +1092,8 @@ class PlayerEventHandler implements Listener
 		    UUID ownerID = (UUID)data.get(0).value();
 		    
 		    //has that player unlocked his drops?
-		    OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID);
+		    //OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID); // dedo1911
+			OfflinePlayer owner = UUIDProvider.get(ownerID);
 		    String ownerName = GriefPreventionPlus.lookupPlayerName(ownerID);
 		    if(owner.isOnline() && !player.equals(owner))
 		    {
@@ -1621,9 +1625,12 @@ class PlayerEventHandler implements Listener
 						long daysElapsed = (now.getTime() - otherPlayerData.getTimeLastLogin()) / (1000 * 60 * 60 * 24); 
 						
 						GriefPreventionPlus.sendMessage(player, TextMode.Info, Messages.PlayerOfflineTime, String.valueOf(daysElapsed));
-						
+
+						// dedo1911
+						OfflinePlayer offPlayer = UUIDProvider.get(claim.ownerID);
 						//drop the data we just loaded, if the player isn't online
-						if(GriefPreventionPlus.instance.getServer().getPlayer(claim.ownerID) == null)
+						//if(GriefPreventionPlus.instance.getServer().getPlayer(claim.ownerID) == null)
+						if(GriefPreventionPlus.instance.getServer().getPlayer(offPlayer.getName()) == null)
 							this.dataStore.clearCachedPlayerData(claim.ownerID);
 					}
 				}
@@ -1995,7 +2002,8 @@ class PlayerEventHandler implements Listener
 				        {
 				            PlayerData ownerData = this.dataStore.getPlayerData(ownerID);
 				            claimBlocksRemaining = ownerData.getRemainingClaimBlocks();
-				            OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID);
+				            //OfflinePlayer owner = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerID); // dedo9111
+							OfflinePlayer owner = UUIDProvider.get(ownerID);
 				            if(!owner.isOnline())
 				            {
 				                this.dataStore.clearCachedPlayerData(ownerID);

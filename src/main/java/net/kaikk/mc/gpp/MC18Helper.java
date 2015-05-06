@@ -25,35 +25,43 @@ import org.bukkit.entity.EntityType;
 
 public class MC18Helper {
 
+    // dedo1911: Those functions here should ALWAYS return FALSE. Because we'll never be on 1.8 with this.
+
 	static boolean isArmorStatue(Entity entity) {
-		return (entity.getType() == EntityType.ARMOR_STAND);
+		return false;
+		//return (entity.getType() == EntityType.ARMOR_STAND);
 	}
 	
 	static boolean isArmorStatue(EntityType entity) {
-		return (entity == EntityType.ARMOR_STAND);
+        return false;
+        //return (entity == EntityType.ARMOR_STAND);
 	}
 	
 	static boolean isArmorStatue(Material material) {
-		return (material == Material.ARMOR_STAND);
+        return false;
+        //return (material == Material.ARMOR_STAND);
 	}
 	
 	static boolean isDoor(Material material) {
-       return (material == Material.ACACIA_DOOR   ||
-       material == Material.BIRCH_DOOR    ||
-       material == Material.JUNGLE_DOOR   ||
-       material == Material.SPRUCE_DOOR   ||
-       material == Material.DARK_OAK_DOOR);
+        return false;
+        //return (material == Material.ACACIA_DOOR   ||
+       //material == Material.BIRCH_DOOR    ||
+       //material == Material.JUNGLE_DOOR   ||
+       //material == Material.SPRUCE_DOOR   ||
+       //material == Material.DARK_OAK_DOOR);
 	}
 	
 	static boolean isFence(Material material) {
-       return (material == Material.ACACIA_FENCE_GATE   || 
-               material == Material.BIRCH_FENCE_GATE    ||
-               material == Material.JUNGLE_FENCE_GATE   ||
-               material == Material.SPRUCE_FENCE_GATE   ||
-               material == Material.DARK_OAK_FENCE_GATE);
+        return false;
+        //return (material == Material.ACACIA_FENCE_GATE   ||
+        //       material == Material.BIRCH_FENCE_GATE    ||
+        //       material == Material.JUNGLE_FENCE_GATE   ||
+        //       material == Material.SPRUCE_FENCE_GATE   ||
+        //       material == Material.DARK_OAK_FENCE_GATE);
 	}
 	
 	static boolean isInvDS(Material material) {
-		return material == Material.DAYLIGHT_DETECTOR_INVERTED;
+        return false;
+        //return material == Material.DAYLIGHT_DETECTOR_INVERTED;
 	}
 }

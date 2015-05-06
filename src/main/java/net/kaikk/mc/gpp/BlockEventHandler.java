@@ -42,7 +42,9 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+/* Ignoring MultiBlockPlaceEvent as 1.6.4 doesn't have any support for them
 import org.bukkit.event.block.BlockMultiPlaceEvent;
+ */
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -146,6 +148,9 @@ public class BlockEventHandler implements Listener
 		}
 	}
 	
+/*
+*   Ignoring MultiBlockPlaceEvent as 1.6.4 doesn't have any support for them
+*
 	//when a player places multiple blocks...
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onBlocksPlace(BlockMultiPlaceEvent placeEvent)
@@ -167,7 +172,7 @@ public class BlockEventHandler implements Listener
             }
         }
 	}
-	
+*/
 	//when a player places a block...
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onBlockPlace(BlockPlaceEvent placeEvent)
