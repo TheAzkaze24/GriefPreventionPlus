@@ -22,6 +22,7 @@ package net.kaikk.mc.gpp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -388,7 +389,8 @@ public class CommandExec implements CommandExecutor {
 					GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.PlayerNotFound2);
 					return true;
 				}
-				newOwnerID = targetPlayer.getUniqueId();
+				// newOwnerID = targetPlayer.getUniqueId();
+                newOwnerID = UUIDProvider.get(targetPlayer);
 				ownerName = targetPlayer.getName();
 			}
 			
@@ -529,7 +531,8 @@ public class CommandExec implements CommandExecutor {
 							GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.PlayerNotFound2);
 							return true;
 						}
-						gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), otherPlayer.getUniqueId());
+						// gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), otherPlayer.getUniqueId());
+                        gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), UUIDProvider.get(otherPlayer));
 						GriefPreventionPlus.addLogEntry(player.getName()+" removed "+otherPlayer.getName()+" permission from his claims");
 					}
 					GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.UntrustIndividualAllClaims, args[0]);
@@ -578,13 +581,20 @@ public class CommandExec implements CommandExecutor {
 						}
 						
 						// a manager needs the same permission or higher
-						if (claim.checkPermission(player, claim.getPermission(otherPlayer.getUniqueId())) != null) {
+					/*	if (claim.checkPermission(player, claim.getPermission(otherPlayer.getUniqueId())) != null) {
 							GriefPreventionPlus.sendMessage(player, TextMode.Err, "You need an higher permission to remove this permission.");
 							return false;
 						}
-						
-						gpp.dataStore.dbUnsetPerm(claim.id, otherPlayer.getUniqueId());
-						claim.unsetPermission(otherPlayer.getUniqueId());
+					*/
+                        if (claim.checkPermission(player, claim.getPermission(UUIDProvider.get(otherPlayer))) != null) {
+                            GriefPreventionPlus.sendMessage(player, TextMode.Err, "You need an higher permission to remove this permission.");
+                            return false;
+                        }
+
+						// gpp.dataStore.dbUnsetPerm(claim.id, otherPlayer.getUniqueId());
+                        gpp.dataStore.dbUnsetPerm(claim.id, UUIDProvider.get(otherPlayer));
+						// claim.unsetPermission(otherPlayer.getUniqueId());
+                        claim.unsetPermission(UUIDProvider.get(otherPlayer));
 						GriefPreventionPlus.addLogEntry(player.getName()+" removed "+otherPlayer.getName()+" permission from claim id "+claim.id);
 					}
 					GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.UntrustIndividualSingleClaim, args[0]);
@@ -653,8 +663,9 @@ public class CommandExec implements CommandExecutor {
 			//if no parameter, just tell player cost per block and balance
 			if(args.length != 1)
 			{
-				GriefPreventionPlus.sendMessage(player, TextMode.Info, Messages.BlockPurchaseCost, String.valueOf(GriefPreventionPlus.instance.config_economy_claimBlocksPurchaseCost), String.valueOf(GriefPreventionPlus.economy.getBalance(player)));
-				return false;
+				// GriefPreventionPlus.sendMessage(player, TextMode.Info, Messages.BlockPurchaseCost, String.valueOf(GriefPreventionPlus.instance.config_economy_claimBlocksPurchaseCost), String.valueOf(GriefPreventionPlus.economy.getBalance(player)));
+                GriefPreventionPlus.sendMessage(player, TextMode.Info, Messages.BlockPurchaseCost, String.valueOf(GriefPreventionPlus.instance.config_economy_claimBlocksPurchaseCost), String.valueOf(GriefPreventionPlus.economy.getBalance(player.getName())));
+                return false;
 			}
 			
 			else
@@ -678,7 +689,8 @@ public class CommandExec implements CommandExecutor {
 				}
 				
 				//if the player can't afford his purchase, send error message
-				double balance = GriefPreventionPlus.economy.getBalance(player);				
+				// double balance = GriefPreventionPlus.economy.getBalance(player);
+                double balance = GriefPreventionPlus.economy.getBalance(player.getName());
 				double totalCost = blockCount * GriefPreventionPlus.instance.config_economy_claimBlocksPurchaseCost;				
 				if(totalCost > balance)
 				{
@@ -689,7 +701,8 @@ public class CommandExec implements CommandExecutor {
 				else
 				{
 					//withdraw cost
-					GriefPreventionPlus.economy.withdrawPlayer(player, totalCost);
+					// GriefPreventionPlus.economy.withdrawPlayer(player, totalCost);
+                    GriefPreventionPlus.economy.withdrawPlayer(player.getName(), totalCost);
 					
 					//add blocks
 					playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() + blockCount);
@@ -764,7 +777,8 @@ public class CommandExec implements CommandExecutor {
 			{					
 				//compute value and deposit it
 				double totalValue = blockCount * GriefPreventionPlus.instance.config_economy_claimBlocksSellValue;					
-				GriefPreventionPlus.economy.depositPlayer(player, totalValue);
+				// GriefPreventionPlus.economy.depositPlayer(player, totalValue);
+                GriefPreventionPlus.economy.depositPlayer(player.getName(), totalValue);
 				
 				//subtract blocks
 				playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() - blockCount);
@@ -919,7 +933,8 @@ public class CommandExec implements CommandExecutor {
 			}
 			
 			//delete all that player's claims
-			gpp.dataStore.deleteClaimsForPlayer(otherPlayer.getUniqueId(), true);
+			// gpp.dataStore.deleteClaimsForPlayer(otherPlayer.getUniqueId(), true);
+            gpp.dataStore.deleteClaimsForPlayer(UUIDProvider.get(otherPlayer), true);
 			
 			GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.DeleteAllSuccess, otherPlayer.getName());
 			if(player != null)
@@ -970,9 +985,11 @@ public class CommandExec implements CommandExecutor {
 			}
 			
 			//load the target player's data
-			PlayerData playerData = gpp.dataStore.getPlayerData(otherPlayer.getUniqueId());
-			GriefPreventionPlus.sendMessage(player, TextMode.Instr, " " + playerData.getAccruedClaimBlocks() + " blocks from play +" + (playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(otherPlayer.getUniqueId())) + " bonus = " + (playerData.getAccruedClaimBlocks() + playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(otherPlayer.getUniqueId())) + " total.");
-			GriefPreventionPlus.sendMessage(player, TextMode.Instr, "Your Claims:");
+			// PlayerData playerData = gpp.dataStore.getPlayerData(otherPlayer.getUniqueId());
+            PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.get(otherPlayer));
+			// GriefPreventionPlus.sendMessage(player, TextMode.Instr, " " + playerData.getAccruedClaimBlocks() + " blocks from play +" + (playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(otherPlayer.getUniqueId())) + " bonus = " + (playerData.getAccruedClaimBlocks() + playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(otherPlayer.getUniqueId())) + " total.");
+            GriefPreventionPlus.sendMessage(player, TextMode.Instr, " " + playerData.getAccruedClaimBlocks() + " blocks from play +" + (playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(UUIDProvider.get(otherPlayer))) + " bonus = " + (playerData.getAccruedClaimBlocks() + playerData.getBonusClaimBlocks() + gpp.dataStore.getGroupBonusBlocks(UUIDProvider.get(otherPlayer))) + " total.");
+            GriefPreventionPlus.sendMessage(player, TextMode.Instr, "Your Claims:");
 			if(playerData.getClaims().size() > 0) {
 				for(int i = 0; i < playerData.getClaims().size(); i++)
 				{
@@ -985,7 +1002,8 @@ public class CommandExec implements CommandExecutor {
 			}
 			//drop the data we just loaded, if the player isn't online
 			if(!otherPlayer.isOnline())
-				gpp.dataStore.clearCachedPlayerData(otherPlayer.getUniqueId());
+				// gpp.dataStore.clearCachedPlayerData(otherPlayer.getUniqueId());
+                gpp.dataStore.clearCachedPlayerData(UUIDProvider.get(otherPlayer));
 			
 			return true;
 		}
@@ -1062,9 +1080,11 @@ public class CommandExec implements CommandExecutor {
 			}
 			
 			//give blocks to player
-			PlayerData playerData = gpp.dataStore.getPlayerData(targetPlayer.getUniqueId());
+			// PlayerData playerData = gpp.dataStore.getPlayerData(targetPlayer.getUniqueId());
+            PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.get(targetPlayer));
 			playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() + adjustment);
-			gpp.dataStore.savePlayerData(targetPlayer.getUniqueId(), playerData);
+			// gpp.dataStore.savePlayerData(targetPlayer.getUniqueId(), playerData);
+            gpp.dataStore.savePlayerData(UUIDProvider.get(targetPlayer), playerData);
 			
 			GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.AdjustBlocksSuccess, targetPlayer.getName(), String.valueOf(adjustment), String.valueOf(playerData.getBonusClaimBlocks()));
 			if(player != null) GriefPreventionPlus.addLogEntry(player.getName() + " adjusted " + targetPlayer.getName() + "'s bonus claim blocks by " + adjustment + ".");
@@ -1097,9 +1117,11 @@ public class CommandExec implements CommandExecutor {
 		    }
 		    
 		    //set player's blocks
-		    PlayerData playerData = this.dataStore.getPlayerData(targetPlayer.getUniqueId());
+		    // PlayerData playerData = this.dataStore.getPlayerData(targetPlayer.getUniqueId());
+            PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.get(targetPlayer));
 		    playerData.setAccruedClaimBlocks(newAmount);
-		    this.dataStore.savePlayerData(targetPlayer.getUniqueId(), playerData);
+		    // this.dataStore.savePlayerData(targetPlayer.getUniqueId(), playerData);
+            this.dataStore.savePlayerData(UUIDProvider.get(targetPlayer), playerData);
 		    
 		    GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.SetClaimBlocksSuccess);
 		    if(player != null) GriefPreventionPlus.addLogEntry(player.getName() + " set " + targetPlayer.getName() + "'s accrued claim blocks to " + newAmount + ".");
@@ -1290,7 +1312,8 @@ public class CommandExec implements CommandExecutor {
             }
             
             //toggle mute for player
-            boolean isMuted = gpp.dataStore.toggleSoftMute(targetPlayer.getUniqueId());
+            // boolean isMuted = gpp.dataStore.toggleSoftMute(targetPlayer.getUniqueId());
+            boolean isMuted = gpp.dataStore.toggleSoftMute(UUIDProvider.get(targetPlayer));
             if(isMuted)
             {
                 GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.SoftMuted, targetPlayer.getName());
@@ -1460,7 +1483,8 @@ public class CommandExec implements CommandExecutor {
 				}
 				
 				for (Claim c : playerData.getClaims()) {
-					c.setPermission(otherPlayer.getUniqueId(), permissionLevel);
+				//	c.setPermission(otherPlayer.getUniqueId(), permissionLevel);
+                    c.setPermission(UUIDProvider.get(otherPlayer), permissionLevel);
 				}
 				GriefPreventionPlus.addLogEntry(player.getName()+" added "+otherPlayer.getName()+" permission ("+(permissionLevel.toString())+") to all his claims");
 			}
@@ -1511,7 +1535,8 @@ public class CommandExec implements CommandExecutor {
 					return;
 				}
 				GriefPreventionPlus.addLogEntry(player.getName()+" added "+otherPlayer.getName()+" permission ("+(permissionLevel.toString())+") to claim id "+claim.id);
-				claim.setPermission(otherPlayer.getUniqueId(), permissionLevel);
+			//	claim.setPermission(otherPlayer.getUniqueId(), permissionLevel);
+                claim.setPermission(UUIDProvider.get(otherPlayer), permissionLevel);
 			}
 		}
 		

@@ -27,24 +27,41 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+//import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 class EventHandler18 implements Listener {
+
+	// dedo1911: Removed ARMOR_STAND check because there's no Armor Stand in 1.6 yet.
+	// Also this removes the needing of PlayerInteractAtEntityEvent.
+
 	//when a player interacts with a specific part of entity...
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+	/*@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event)
     {
         //treat it the same as interacting with an entity in general
         if(event.getRightClicked().getType() == EntityType.ARMOR_STAND) {
             GriefPreventionPlus.instance.playerEventHandler.onPlayerInteractEntity((PlayerInteractEntityEvent)event);
         }
-    }
+    }*/
 
 	//blocks theft by pulling blocks out of a claim (again pistons)
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onBlockPistonRetract (BlockPistonRetractEvent event)
 	{
+		// dedo1911 - 1.8 compatibility.
+		List<Block> eventBlocks;
+		int pistonLength = 2; // TODO: This is NOT a fixed number. To see if we find a better way to get piston length.
+		ArrayList tmpBlockList = new ArrayList();
+		for(int i = 0; i < pistonLength; ++i) {
+			tmpBlockList.add(event.getBlock().getRelative(event.getDirection(), i + 1));
+		}
+		eventBlocks = Collections.unmodifiableList(tmpBlockList);
+
 		//pulling up is always safe
 		if(event.getDirection() == BlockFace.UP) return;
 		
@@ -63,9 +80,9 @@ class EventHandler18 implements Listener {
     		        event.setCancelled(true);
     		        return;
     		    }
-    		    
-    		    for(Block movedBlock : event.getBlocks())
-    		    {
+
+				for(Block movedBlock : eventBlocks/*event.getBlocks() /* dedo1911 */)
+				{
     		        //if pulled block isn't in the same land claim, cancel the event
         		    if(!pistonClaim.contains(movedBlock.getLocation(), false, false))
         		    {
@@ -85,7 +102,7 @@ class EventHandler18 implements Listener {
                 if(pistonClaim != null) pistonOwnerName = pistonClaim.getOwnerName();
     		    
     		    String movingBlockOwnerName = "_";
-        		for(Block movedBlock : event.getBlocks())
+        		for(Block movedBlock : eventBlocks/*event.getBlocks() /* dedo1911 */)
         		{
         		    //who owns the moving block, if anyone?
                     Claim movingBlockClaim = GriefPreventionPlus.instance.dataStore.getClaimAt(movedBlock.getLocation(), false, pistonClaim);

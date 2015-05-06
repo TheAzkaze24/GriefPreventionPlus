@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
@@ -323,8 +324,8 @@ public class GriefPreventionPlus extends JavaPlugin
 		final long millisecondsPerDay = 1000 * 60 * 60 * 24;
 		for(OfflinePlayer player : offlinePlayers) {
 		    //if the player has been seen in the last 30 days, cache his name/UUID pair
-		    if((player.getUniqueId()!=null && player.getName() != null && (now - player.getLastPlayed())/millisecondsPerDay <= 30)) {
-	    		this.playerNameToIDMap.put(player.getName().toLowerCase(), player.getUniqueId());
+		    if(( UUIDProvider.get(player) !=null && player.getName() != null && (now - player.getLastPlayed())/millisecondsPerDay <= 30)) {
+	    		this.playerNameToIDMap.put(player.getName().toLowerCase(), UUIDProvider.get(player));
 	    		playersCached++;
 		    }
 		}
@@ -893,7 +894,8 @@ public class GriefPreventionPlus extends JavaPlugin
             return null;
         }
 
-		return this.getServer().getOfflinePlayer(bestMatchID);
+		return UUIDProvider.get(bestMatchID);
+		// return this.getServer().getOfflinePlayer(bestMatchID); // dedo1911
 	}
     
     public UUID resolvePlayerId(String name)  {
@@ -910,8 +912,9 @@ public class GriefPreventionPlus extends JavaPlugin
         if(playerID == UUID1) return "an administrator";
         
         //check the cache
-        OfflinePlayer player = GriefPreventionPlus.instance.getServer().getOfflinePlayer(playerID);
-        if(player.hasPlayedBefore() || player.isOnline()) {
+        //OfflinePlayer player = GriefPreventionPlus.instance.getServer().getOfflinePlayer(playerID);
+        OfflinePlayer player = UUIDProvider.get(playerID);
+		if(player.hasPlayedBefore() || player.isOnline()) {
             return player.getName();
         } else {
             return "someone";

@@ -21,6 +21,7 @@ package net.kaikk.mc.gpp;
 
 import java.util.Iterator;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -65,8 +66,9 @@ public class CleanupUnusedClaimsTask extends BukkitRunnable {
 		if (this.iterator.hasNext()) {
 			Claim claim = this.iterator.next();
 			if (!claim.isAdminClaim()) {
-				OfflinePlayer player = this.instance.getServer().getOfflinePlayer(claim.ownerID);
-				PlayerData playerData = this.instance.dataStore.getPlayerData(claim.ownerID);
+				// OfflinePlayer player = this.instance.getServer().getOfflinePlayer(claim.ownerID);
+                OfflinePlayer player = UUIDProvider.get(claim.ownerID);
+                PlayerData playerData = this.instance.dataStore.getPlayerData(claim.ownerID);
 				if (player!=null) {
 					long timeElapsed=System.currentTimeMillis()-player.getLastPlayed();
 

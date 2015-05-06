@@ -40,11 +40,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import net.kaikk.mc.uuidprovider.UUIDProvider;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -538,7 +535,9 @@ public class DataStore
 	//this will return 0 when he's offline, and the correct number when online.
 	synchronized int getGroupBonusBlocks(UUID playerID)
 	{
-		Player player = GriefPreventionPlus.instance.getServer().getPlayer(playerID);
+		// Player player = GriefPreventionPlus.instance.getServer().getPlayer(playerID);
+        OfflinePlayer offPlayer = UUIDProvider.get(playerID);
+        Player player = GriefPreventionPlus.instance.getServer().getPlayer(offPlayer.getName());
 		if (player!=null) {
 			int bonusBlocks=0;
 			for (Entry<String,Integer> e : permissionToBonusBlocksMap.entrySet()) {
@@ -551,8 +550,10 @@ public class DataStore
 			return 0;
 		}
 	}
-	
-	//grants a group (players with a specific permission) bonus claim blocks as long as they're still members of the group
+
+
+
+    //grants a group (players with a specific permission) bonus claim blocks as long as they're still members of the group
 	synchronized public int adjustGroupBonusBlocks(String groupName, int amount)
 	{
 		Integer currentValue = this.permissionToBonusBlocksMap.get(groupName);
@@ -1731,10 +1732,15 @@ public class DataStore
 
 			while(results.next()) {
 				World world = GriefPreventionPlus.instance.getServer().getWorld(toUUID(results.getBytes(3)));
-				if (world==null || GriefPreventionPlus.instance.getServer().getOfflinePlayer(toUUID(results.getBytes(2)))==null || (results.getInt(8)!=-1 && this.getClaim(results.getInt(8))==null)) {
+			/*	if (world==null || GriefPreventionPlus.instance.getServer().getOfflinePlayer(toUUID(results.getBytes(2)))==null || (results.getInt(8)!=-1 && this.getClaim(results.getInt(8))==null)) {
 					statement2.executeUpdate("DELETE FROM gpp_claims WHERE id="+results.getInt(1));
 					count++;
 				}
+            */
+                if (world==null || UUIDProvider.get(toUUID(results.getBytes(2))) == null || (results.getInt(8) != -1 && this.getClaim(results.getInt(8))==null)) {
+                    statement2.executeUpdate("DELETE FROM gpp_claims WHERE id="+results.getInt(1));
+                    count++;
+                }
 			}
 		} catch(SQLException e) {
 			GriefPreventionPlus.addLogEntry("SQL Error during clear orphan claims. Details: "+e.getMessage());
