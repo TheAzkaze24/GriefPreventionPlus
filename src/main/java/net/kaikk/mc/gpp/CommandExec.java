@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import net.kaikk.mc.uuidprovider.UUIDProvider;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

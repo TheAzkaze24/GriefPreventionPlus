@@ -28,9 +28,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import net.kaikk.mc.uuidprovider.UUIDFetcher;
 import net.kaikk.mc.uuidprovider.UUIDProvider;
-import org.bukkit.Achievement;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -59,8 +58,24 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -551,16 +566,12 @@ class PlayerEventHandler implements Listener
 		playerData.lastSpawn = now;
 		this.lastLoginThisServerSessionMap.put(playerID, nowDate);
 
-		// TODO: Search if player has MINE_WOOD achievement. # dedo1911
-		//if newish, prevent chat until he's moved a bit to prove he's not a bot
-		/*if(!player.hasAchievement(Achievement.MINE_WOOD))
-		{
-		    playerData.noChatLocation = player.getLocation();
-		}*/
-
 		//if player has never played on the server before...
 		if(!player.hasPlayedBefore())
 		{
+			//if newish, prevent chat until he's moved a bit to prove he's not a bot
+			playerData.noChatLocation = player.getLocation();
+			
 			//may need pvp protection
 		    GriefPreventionPlus.instance.checkPvpProtectionNeeded(player);
 		    

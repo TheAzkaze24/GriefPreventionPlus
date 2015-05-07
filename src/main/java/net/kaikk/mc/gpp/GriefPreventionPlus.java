@@ -175,7 +175,6 @@ public class GriefPreventionPlus extends JavaPlugin
 	public final static UUID UUID1 = new UUID(0,1);
 	
 	PlayerEventHandler playerEventHandler;
-	EventHandler18 playerEventHandler18;
 	
 	public static boolean isBukkit18 = false;
 	
@@ -261,18 +260,6 @@ public class GriefPreventionPlus extends JavaPlugin
 		//player events
 		playerEventHandler = new PlayerEventHandler(this.dataStore);
 		pluginManager.registerEvents(playerEventHandler, this);
-		
-		//player events for MC 1.8
-		try {
-			Class.forName("org.bukkit.event.player.PlayerInteractAtEntityEvent");
-			playerEventHandler18 = new EventHandler18();
-			pluginManager.registerEvents(playerEventHandler18, this);
-			
-			isBukkit18=true;
-			addLogEntry("Oh, you're running Bukkit 1.8+!");
-		} catch (ClassNotFoundException e) {
-			addLogEntry("You're running Bukkit 1.7!");
-		}
 		
 		//block events
 		BlockEventHandler blockEventHandler = new BlockEventHandler(this.dataStore);

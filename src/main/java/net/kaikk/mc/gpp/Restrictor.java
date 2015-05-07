@@ -32,7 +32,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 
 class Restrictor {
 	private final static String dataDirPath = "plugins" + File.separator + "GriefPreventionData" + File.separator + "Restrictor" + File.separator;

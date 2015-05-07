@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
- package net.kaikk.mc.gpp;
+package net.kaikk.mc.gpp;
 
 import org.bukkit.entity.Player;
 
