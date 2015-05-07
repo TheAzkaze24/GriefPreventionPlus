@@ -386,7 +386,7 @@ class EntityEventHandler implements Listener
 		if(!(entity instanceof Player)) return;  //only tracking players
 		
 		Player player = (Player)entity;
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		//if involved in a siege
 		if(playerData.siegeData != null)
@@ -410,7 +410,7 @@ class EntityEventHandler implements Listener
             //remember information about these drops so that they can be marked when they spawn as items
             long expirationTime = System.currentTimeMillis() + 3000;  //now + 3 seconds
             Location deathLocation = player.getLocation();
-            UUID playerID = player.getUniqueId();
+            UUID playerID = UUIDProvider.retrieveUUID(player.getName());
             List<ItemStack> drops = event.getDrops();
             for(ItemStack stack : drops)
             {

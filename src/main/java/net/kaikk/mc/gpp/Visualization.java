@@ -20,6 +20,7 @@ package net.kaikk.mc.gpp;
 
 import java.util.ArrayList;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -37,7 +38,7 @@ public class Visualization
 	//sends a visualization to a player
 	public static void Apply(Player player, Visualization visualization)
 	{
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		//if he has any current visualization, clear it first
 		if(playerData.currentVisualization != null)
@@ -57,7 +58,7 @@ public class Visualization
 	{
 		if(!player.isOnline()) return;
 		
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		Visualization visualization = playerData.currentVisualization;
 		

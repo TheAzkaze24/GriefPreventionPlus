@@ -18,6 +18,7 @@
 
 package net.kaikk.mc.gpp;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.entity.Player;
 
 //sends a message to a player
@@ -36,7 +37,7 @@ class PvPImmunityValidationTask implements Runnable
 	{
 		if(!player.isOnline()) return;
 		
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		if(!playerData.pvpImmune) return;
 		
 		//check the player's inventory for anything

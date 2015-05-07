@@ -934,7 +934,7 @@ public class GriefPreventionPlus extends JavaPlugin
 			//save data for any online players
 			for(Player player : this.getServer().getOnlinePlayers())
 			{
-				UUID playerID = player.getUniqueId();
+				UUID playerID = UUIDProvider.retrieveUUID(player.getName());
 				PlayerData playerData = this.dataStore.getPlayerData(playerID);
 				this.dataStore.savePlayerDataSync(playerID, playerData);
 			}
@@ -962,7 +962,7 @@ public class GriefPreventionPlus extends JavaPlugin
 		if(GriefPreventionPlus.isInventoryEmpty(player))
 		{
     		//if empty, apply immunity
-    		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+    		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
     		playerData.pvpImmune = true;
     		
     		//inform the player after he finishes respawning
@@ -1091,7 +1091,7 @@ public class GriefPreventionPlus extends JavaPlugin
 	
 	public String allowBuild(Player player, Location location, Material material)
 	{
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		Claim claim = this.dataStore.getClaimAt(location, false, playerData.lastClaim);
 		
 		//exception: administrators in ignore claims mode and special player accounts created by server mods
@@ -1128,7 +1128,7 @@ public class GriefPreventionPlus extends JavaPlugin
 	
 	public String allowBreak(Player player, Block block, Location location)
 	{
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		Claim claim = this.dataStore.getClaimAt(location, false, playerData.lastClaim);
 		
 		//exception: administrators in ignore claims mode, and special player accounts created by server mods

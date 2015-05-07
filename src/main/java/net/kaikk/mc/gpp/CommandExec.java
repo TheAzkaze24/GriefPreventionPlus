@@ -61,7 +61,7 @@ public class CommandExec implements CommandExecutor {
 				}
 				
 				int newClaimArea = side*side; 
-				PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+				PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 				int remainingBlocks = playerData.getRemainingClaimBlocks();
 				if(newClaimArea > remainingBlocks)
 				{
@@ -82,7 +82,7 @@ public class CommandExec implements CommandExecutor {
 						player.getWorld(), 
 						x1, x2, 
 						z1, z2, 
-						player.getUniqueId(),
+						UUIDProvider.retrieveUUID(player.getName()),
 						null, null,
 						player);
 				
@@ -252,7 +252,7 @@ public class CommandExec implements CommandExecutor {
 		//ignoreclaims
 		if(cmd.getName().equalsIgnoreCase("ignoreclaims") && player != null)
 		{
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			
 			playerData.ignoreClaims = !playerData.ignoreClaims;
 			
@@ -275,7 +275,7 @@ public class CommandExec implements CommandExecutor {
 			if(args.length != 0) return false;
 			
 			//count claims
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			int originalClaimCount = playerData.getClaims().size();
 			
 			//check count
@@ -292,7 +292,7 @@ public class CommandExec implements CommandExecutor {
 			}
 			
 			//delete them
-			gpp.dataStore.deleteClaimsForPlayer(player.getUniqueId(), false);
+			gpp.dataStore.deleteClaimsForPlayer(UUIDProvider.retrieveUUID(player.getName()), false);
 			
 			//inform the player
 			int remainingBlocks = playerData.getRemainingClaimBlocks();
@@ -308,7 +308,7 @@ public class CommandExec implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("restorenature") && player != null)
 		{
 			//change shovel mode
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.RestoreNature;
 			GriefPreventionPlus.sendMessage(player, TextMode.Instr, Messages.RestoreNatureActivate);
 			return true;
@@ -318,7 +318,7 @@ public class CommandExec implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("restorenatureaggressive") && player != null)
 		{
 			//change shovel mode
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.RestoreNatureAggressive;
 			GriefPreventionPlus.sendMessage(player, TextMode.Warn, Messages.RestoreNatureAggressiveActivate);
 			return true;
@@ -328,7 +328,7 @@ public class CommandExec implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("restorenaturefill") && player != null)
 		{
 			//change shovel mode
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.RestoreNatureFill;
 			
 			//set radius based on arguments
@@ -502,13 +502,13 @@ public class CommandExec implements CommandExecutor {
 			Claim claim = gpp.dataStore.getClaimAt(player.getLocation(), true /*ignore height*/, null);
 
 			if (claim==null) { // all player's claims
-				if (gpp.dataStore.getPlayerData(player.getUniqueId()).getClaims().size()>0) {
+				if (gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())).getClaims().size()>0) {
 					GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.YouHaveNoClaims);
 					return false;
 				}
 				
 				if(args[0].equals("all")) { // clear all permissions from player's claims
-					gpp.dataStore.clearPermissionsOnPlayerClaims(player.getUniqueId());
+					gpp.dataStore.clearPermissionsOnPlayerClaims(UUIDProvider.retrieveUUID(player.getName()));
 					
 					GriefPreventionPlus.addLogEntry(player.getName()+" removed all permissions from his claims");
 					
@@ -519,11 +519,11 @@ public class CommandExec implements CommandExecutor {
 							GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.InvalidPermissionID);
 							return false;
 						}
-						gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), permBukkit);
+						gpp.dataStore.dropPermissionOnPlayerClaims(UUIDProvider.retrieveUUID(player.getName()), permBukkit);
 						GriefPreventionPlus.addLogEntry(player.getName()+" removed "+args[0]+" permission from his claims");
 						
 					} else if(args[0].equals("public")) { // public
-						gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), GriefPreventionPlus.UUID0);
+						gpp.dataStore.dropPermissionOnPlayerClaims(UUIDProvider.retrieveUUID(player.getName()), GriefPreventionPlus.UUID0);
 						GriefPreventionPlus.addLogEntry(player.getName()+" removed public permission from his claims");
 					} else { // player?
 						OfflinePlayer otherPlayer = gpp.resolvePlayer(args[0]);
@@ -531,8 +531,8 @@ public class CommandExec implements CommandExecutor {
 							GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.PlayerNotFound2);
 							return true;
 						}
-						// gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), otherPlayer.getUniqueId());
-                        gpp.dataStore.dropPermissionOnPlayerClaims(player.getUniqueId(), UUIDProvider.get(otherPlayer));
+						// gpp.dataStore.dropPermissionOnPlayerClaims(UUIDProvider.retrieveUUID(player.getName()), otherPlayer.getUniqueId());
+                        gpp.dataStore.dropPermissionOnPlayerClaims(UUIDProvider.retrieveUUID(player.getName()), UUIDProvider.get(otherPlayer));
 						GriefPreventionPlus.addLogEntry(player.getName()+" removed "+otherPlayer.getName()+" permission from his claims");
 					}
 					GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.UntrustIndividualAllClaims, args[0]);
@@ -670,7 +670,7 @@ public class CommandExec implements CommandExecutor {
 			
 			else
 			{
-				PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+				PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 				
 				//try to parse number of blocks
 				int blockCount;
@@ -706,7 +706,7 @@ public class CommandExec implements CommandExecutor {
 					
 					//add blocks
 					playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() + blockCount);
-					gpp.dataStore.savePlayerData(player.getUniqueId(), playerData);
+					gpp.dataStore.savePlayerData(UUIDProvider.retrieveUUID(player.getName()), playerData);
 					
 					//inform player
 					GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.PurchaseConfirmation, String.valueOf(totalCost), String.valueOf(playerData.getRemainingClaimBlocks()));
@@ -740,7 +740,7 @@ public class CommandExec implements CommandExecutor {
 			}
 			
 			//load player data
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			int availableBlocks = playerData.getBonusClaimBlocks();
 			
 			//if no amount provided, just tell player value per block sold, and how many he can sell
@@ -782,7 +782,7 @@ public class CommandExec implements CommandExecutor {
 				
 				//subtract blocks
 				playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() - blockCount);
-				gpp.dataStore.savePlayerData(player.getUniqueId(), playerData);
+				gpp.dataStore.savePlayerData(UUIDProvider.retrieveUUID(player.getName()), playerData);
 				
 				//inform player
 				GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.BlockSaleConfirmation, String.valueOf(totalValue), String.valueOf(playerData.getRemainingClaimBlocks()));
@@ -794,7 +794,7 @@ public class CommandExec implements CommandExecutor {
 		//adminclaims
 		else if(cmd.getName().equalsIgnoreCase("adminclaims") && player != null)
 		{
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.Admin;
 			GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.AdminClaimsMode);
 			
@@ -804,7 +804,7 @@ public class CommandExec implements CommandExecutor {
 		//basicclaims
 		else if(cmd.getName().equalsIgnoreCase("basicclaims") && player != null)
 		{
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.Basic;
 			playerData.claimSubdividing = null;
 			GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.BasicClaimsMode);
@@ -815,7 +815,7 @@ public class CommandExec implements CommandExecutor {
 		//subdivideclaims
 		else if(cmd.getName().equalsIgnoreCase("subdivideclaims") && player != null)
 		{
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			playerData.shovelMode = ShovelMode.Subdivide;
 			playerData.claimSubdividing = null;
 			GriefPreventionPlus.sendMessage(player, TextMode.Instr, Messages.SubdivisionMode);
@@ -849,7 +849,7 @@ public class CommandExec implements CommandExecutor {
 			//deleting an admin claim additionally requires the adminclaims permission
 			if(!claim.isAdminClaim() || player.hasPermission("griefprevention.adminclaims"))
 			{
-				PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+				PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 				if(claim.children.size() > 0 && !playerData.warnedAboutMajorDeletion)
 				{
 					GriefPreventionPlus.sendMessage(player, TextMode.Warn, Messages.DeletionSubdivisionWarning);
@@ -1011,7 +1011,7 @@ public class CommandExec implements CommandExecutor {
 		//unlockItems
 		else if(cmd.getName().equalsIgnoreCase("unlockdrops") && player != null)
 		{
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		    playerData.dropsAreUnlocked = true;
 		    GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.DropUnlockConfirmation);
 			
@@ -1133,7 +1133,7 @@ public class CommandExec implements CommandExecutor {
 		{
 			//FEATURE: empower players who get "stuck" in an area where they don't have permission to build to save themselves
 			
-			PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			Claim claim = gpp.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
 			
 			//if another /trapped is pending, ignore this slash command
@@ -1347,7 +1347,7 @@ public class CommandExec implements CommandExecutor {
 		    //requires one parameter
             if(args.length < 1) return false;
             
-            PlayerData playerData = gpp.dataStore.getPlayerData(player.getUniqueId());
+            PlayerData playerData = gpp.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
             
             //special case: cancellation
             if(args[0].equalsIgnoreCase("cancel"))
@@ -1391,7 +1391,7 @@ public class CommandExec implements CommandExecutor {
 	
 	boolean abandonClaimHandler(Player player, boolean deleteTopLevelClaim) 
 	{
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		//which claim is being abandoned?
 		Claim claim = this.dataStore.getClaimAt(player.getLocation(), true /*ignore height*/, null);
@@ -1453,7 +1453,7 @@ public class CommandExec implements CommandExecutor {
 		Claim claim = this.dataStore.getClaimAt(player.getLocation(), true /*ignore height*/, null);
 		
 		if (claim==null) { // all player's claims
-			PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+			PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 			if (playerData.getClaims().size()==0) {
 				// no claims
 				GriefPreventionPlus.sendMessage(player, TextMode.Err, Messages.GrantPermissionNoClaim);

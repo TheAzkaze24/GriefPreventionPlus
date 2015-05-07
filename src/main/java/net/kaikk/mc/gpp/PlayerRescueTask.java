@@ -18,6 +18,7 @@
  
 package net.kaikk.mc.gpp;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -45,7 +46,7 @@ class PlayerRescueTask implements Runnable
 		if(!player.isOnline()) return;
 		
 		//he no longer has a pending /trapped slash command, so he can try to use it again now
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		playerData.pendingTrapped = false;
 		
 		//if the player moved three or more blocks from where he used /trapped, admonish him and don't save him

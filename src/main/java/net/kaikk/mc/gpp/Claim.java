@@ -302,7 +302,7 @@ public class Claim {
 		}
 		
 		//no resizing, deleting, and so forth while under siege
-		if(player.getUniqueId().equals(this.ownerID)) {
+		if(UUIDProvider.retrieveUUID(player.getName()).equals(this.ownerID)) {
 			if(this.siegeData != null) {
 				return GriefPreventionPlus.instance.dataStore.getMessage(Messages.NoModifyDuringSiege);
 			}
@@ -356,13 +356,13 @@ public class Claim {
 		}
 		
 		//no building while in pvp combat
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		if(playerData.inPvpCombat()) {
 			return GriefPreventionPlus.instance.dataStore.getMessage(Messages.NoBuildPvP);			
 		}
 		
 		//owners can make changes, or admins with ignore claims mode enabled
-		if(player.getUniqueId().equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return null;
+		if(UUIDProvider.retrieveUUID(player.getName()).equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())).ignoreClaims) return null;
 		
 		//anyone with explicit build permission can make changes
 		if(this.hasExplicitPermission(player, ClaimPermission.BUILD)) return null;
@@ -393,7 +393,7 @@ public class Claim {
 	
 	// The player need that explicit permission
 	public boolean hasExplicitPermission(Player player, ClaimPermission level) {
-		if ((this.getPermission(player.getUniqueId()) & level.perm) != 0) {
+		if ((this.getPermission(UUIDProvider.retrieveUUID(player.getName())) & level.perm) != 0) {
 			return true;
 		}
 		
@@ -472,7 +472,7 @@ public class Claim {
 			//custom error messages for siege mode
 			if(!breakable) {
 				return GriefPreventionPlus.instance.dataStore.getMessage(Messages.NonSiegeMaterial);
-			} else if(player.getUniqueId().equals(this.ownerID)) {
+			} else if(UUIDProvider.retrieveUUID(player.getName()).equals(this.ownerID)) {
 				return GriefPreventionPlus.instance.dataStore.getMessage(Messages.NoOwnerBuildUnderSiege);
 			} else {
 				return null;
@@ -494,7 +494,7 @@ public class Claim {
 		}
 		
 		//claim owner and admins in ignoreclaims mode have access
-		if(player.getUniqueId().equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return null;
+		if(UUIDProvider.retrieveUUID(player.getName()).equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())).ignoreClaims) return null;
 		
 		//look for explicit (or public) individual access, inventory, or build permission
 		if(this.hasExplicitPermission(player, ClaimPermission.ACCESS)) return null;
@@ -532,7 +532,7 @@ public class Claim {
 		}
 		
 		//owner and administrators in ignoreclaims mode have access
-		if(player.getUniqueId().equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId()).ignoreClaims) return null;
+		if(UUIDProvider.retrieveUUID(player.getName()).equals(this.ownerID) || GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())).ignoreClaims) return null;
 		
 		//admin claims need adminclaims permission only.
 		if(this.isAdminClaim()) {

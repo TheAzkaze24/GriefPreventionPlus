@@ -22,6 +22,7 @@ package net.kaikk.mc.gpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -129,7 +130,7 @@ public class BlockEventHandler implements Listener
 		}
 		
 		//if not empty and wasn't the same as the last sign, log it and remember it for later
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())); // dedo1911: fixing Player.getUniqueId
 		if(notEmpty && playerData.lastMessage != null && !playerData.lastMessage.equals(signMessage))
 		{		
 			GriefPreventionPlus.addLogEntry(player.getName()+" placed at "+GriefPreventionPlus.getfriendlyLocationString(event.getBlock().getLocation())+" this sign: \n"+lines.toString());
@@ -225,7 +226,7 @@ public class BlockEventHandler implements Listener
 		}
 		
 		//if the block is being placed within or under an existing claim
-		PlayerData playerData = this.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName())); // dedo1911: fixing Player.getUniqueId
 		Claim claim = this.dataStore.getClaimAt(block.getLocation(), false, playerData.lastClaim);
 		if(claim != null)
 		{
@@ -262,7 +263,7 @@ public class BlockEventHandler implements Listener
 				//radius == 0 means protect ONLY the chest
 				if(GriefPreventionPlus.instance.config_claims_automaticClaimsForNewPlayersRadius == 0)
 				{					
-					this.dataStore.createClaim(block.getWorld(), block.getX(), block.getX(), block.getZ(), block.getZ(), player.getUniqueId(), null, null, player);
+					this.dataStore.createClaim(block.getWorld(), block.getX(), block.getX(), block.getZ(), block.getZ(), UUIDProvider.retrieveUUID(player.getName()), null, null, player); // dedo1911: fixing Player.getUniqueId
 					GriefPreventionPlus.sendMessage(player, TextMode.Success, Messages.ChestClaimConfirmation);					
 				}
 				
@@ -274,7 +275,7 @@ public class BlockEventHandler implements Listener
 					while(radius >= 0 && !this.dataStore.createClaim(block.getWorld(), 
 							block.getX() - radius, block.getX() + radius,
 							block.getZ() - radius, block.getZ() + radius, 
-							player.getUniqueId(), 
+							UUIDProvider.retrieveUUID(player.getName()),// dedo1911: fixing Player.getUniqueId
 							null, null,
 							player).succeeded)
 					{
