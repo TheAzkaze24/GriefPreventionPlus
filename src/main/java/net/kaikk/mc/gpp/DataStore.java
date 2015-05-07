@@ -185,6 +185,18 @@ public class DataStore
 
 						if (ownerString.length()==36 && (tString=ownerString.replace("-", "")).length()==32) {
 							playerId="0x"+tString;
+						} else {
+							OfflinePlayer offlinePlayer = GriefPreventionPlus.instance.getServer().getOfflinePlayer(ownerString);
+							if (offlinePlayer!=null) {
+								UUID uuid = UUIDProvider.get(offlinePlayer); // TODO update UUIDProvider so we can request all players with few requests
+								if (uuid!=null) {
+									playerId=UUIDtoHexString(uuid);
+								} else {
+									GriefPreventionPlus.addLogEntry("Claim "+results.getLong(1)+": couldn't retrieve player "+ownerString+"'s UUID.");
+								}
+							} else {
+								GriefPreventionPlus.addLogEntry("Claim "+results.getLong(1)+": player "+ownerString+" not found.");
+							}
 						}
 					
 						String[] lesser = results.getString(3).split(";");
