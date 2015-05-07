@@ -19,12 +19,7 @@
 
 package net.kaikk.mc.gpp;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -537,7 +532,7 @@ public class DataStore
 	{
 		// Player player = GriefPreventionPlus.instance.getServer().getPlayer(playerID);
         OfflinePlayer offPlayer = UUIDProvider.get(playerID);
-        Player player = GriefPreventionPlus.instance.getServer().getPlayer(offPlayer.getName());
+		Player player = offPlayer.getPlayer(); //GriefPreventionPlus.instance.getServer().getPlayer(offPlayer.getName());
 		if (player!=null) {
 			int bonusBlocks=0;
 			for (Entry<String,Integer> e : permissionToBonusBlocksMap.entrySet()) {
@@ -1328,7 +1323,7 @@ public class DataStore
 	//extend a siege, if it's possible to do so
 	synchronized void tryExtendSiege(Player player, Claim claim)
 	{
-		PlayerData playerData = this.getPlayerData(player.getUniqueId());
+		PlayerData playerData = this.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		//player must be sieged
 		if(playerData.siegeData == null) return;

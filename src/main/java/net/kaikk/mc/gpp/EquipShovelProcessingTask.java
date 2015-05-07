@@ -18,6 +18,7 @@
  
 package net.kaikk.mc.gpp;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.entity.Player;
 
 //tells a player about how many claim blocks he has, etc
@@ -42,7 +43,7 @@ class EquipShovelProcessingTask implements Runnable
 		//if he's not holding the golden shovel anymore, do nothing
 		if(player.getItemInHand().getType() != GriefPreventionPlus.instance.config_claims_modificationTool) return;
 		
-		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(player.getUniqueId());
+		PlayerData playerData = GriefPreventionPlus.instance.dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
 		
 		int remainingBlocks = playerData.getRemainingClaimBlocks();
 		

@@ -18,6 +18,7 @@
  
  package net.kaikk.mc.gpp;
 
+import net.kaikk.mc.uuidprovider.UUIDProvider;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -51,7 +52,7 @@ class DeliverClaimBlocksTask implements Runnable
 	    else
 	    {
 	        DataStore dataStore = GriefPreventionPlus.instance.dataStore;
-            PlayerData playerData = dataStore.getPlayerData(player.getUniqueId());
+            PlayerData playerData = dataStore.getPlayerData(UUIDProvider.retrieveUUID(player.getName()));
             
             //if player is over accrued limit, accrued limit was probably reduced in config file AFTER he accrued
             //in that case, leave his blocks where they are
