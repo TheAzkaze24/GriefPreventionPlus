@@ -162,7 +162,7 @@ public class DataStore
 						+ "PRIMARY KEY (claimid,player),"
 						+ "KEY claimid (claimid));");
 				
-				statement.execute("CREATE TABLE IF NOT EXISTS gpp_playerdata ("
+				statement.execute("CREATE TABLE IF NOT EXISTS forsaken_mc.gpp_playerdata ("
 						+ "player binary(16) NOT NULL COMMENT 'UUID',"
 						+ "accruedblocks int(11) NOT NULL,"
 						+ "bonusblocks int(11) NOT NULL,"
@@ -295,7 +295,7 @@ public class DataStore
 						}
 					}
 					
-					results = statement.executeQuery("SELECT name, accruedblocks, bonusblocks FROM griefprevention_playerdata;");
+					results = statement.executeQuery("SELECT name, accruedblocks, bonusblocks FROM forsaken_mc.griefprevention_playerdata;");
 					
 					Map<String, GppBlocks> gppblocks = new HashMap<String, GppBlocks>(); 
 					while(results.next()) {
@@ -320,7 +320,7 @@ public class DataStore
 					}
 					
 					for (Entry<String, GppBlocks> gppbf : gppblocks.entrySet()) {
-						statement2.executeUpdate("INSERT INTO gpp_playerdata VALUES (0x"+gppbf.getKey()+", "+gppbf.getValue().a+", "+gppbf.getValue().b+");");
+						statement2.executeUpdate("INSERT INTO forsaken_mc.gpp_playerdata VALUES (0x"+gppbf.getKey()+", "+gppbf.getValue().a+", "+gppbf.getValue().b+");");
 						k++;
 					}
 					
@@ -862,7 +862,7 @@ public class DataStore
 			this.refreshDataConnection();
 			
 			Statement statement = this.databaseConnection.createStatement();
-			ResultSet results = statement.executeQuery("SELECT * FROM gpp_playerdata WHERE player=" + UUIDtoHexString(playerID) + ";");
+			ResultSet results = statement.executeQuery("SELECT * FROM forsaken_mc.gpp_playerdata WHERE player=" + UUIDtoHexString(playerID) + ";");
 		
 			//if data for this player exists, use it
 			if(results.next()){			
@@ -1143,7 +1143,7 @@ public class DataStore
 			this.refreshDataConnection();
 			
 			Statement statement = databaseConnection.createStatement();
-			statement.executeUpdate("INSERT INTO gpp_playerdata VALUES ("+UUIDtoHexString(playerData.playerID)+", \""+playerData.getAccruedClaimBlocks()+"\", "+playerData.getBonusClaimBlocks()+") ON DUPLICATE KEY UPDATE accruedblocks="+playerData.getAccruedClaimBlocks()+", bonusblocks="+playerData.getBonusClaimBlocks()+";");
+			statement.executeUpdate("INSERT INTO forsaken_mc.gpp_playerdata VALUES ("+UUIDtoHexString(playerData.playerID)+", \""+playerData.getAccruedClaimBlocks()+"\", "+playerData.getBonusClaimBlocks()+") ON DUPLICATE KEY UPDATE accruedblocks="+playerData.getAccruedClaimBlocks()+", bonusblocks="+playerData.getBonusClaimBlocks()+";");
 		} catch(SQLException e) {
 			GriefPreventionPlus.addLogEntry("Unable to save data for player " + playerID.toString() + ".  Details:");
 			GriefPreventionPlus.addLogEntry(e.getMessage());
